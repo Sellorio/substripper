@@ -5,4 +5,5 @@ services:
       context: .
       dockerfile: Sellorio.Substripper/Dockerfile
     volumes:
-      - C:\Repos\substripper\TestFiles:/src/TestFiles
+      - .\TestFiles:/src/TestFiles
+      - .\Data:/data

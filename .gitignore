@@ -1,5 +1,9 @@
 .vs/
 bin/
 obj/
-TestFiles/**/*.mp4
-TestFiles/**/*.mkv
+
+/TestFiles/**/*.*
+!/TestFiles/.gitkeep
+
+/Data/**/*.*
+!/Data/.gitkeep
