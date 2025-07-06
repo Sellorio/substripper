@@ -1,0 +1,33 @@
+﻿namespace Sellorio.Substripper.Models
+{
+    public enum Language
+    {
+        English,
+        Japanese,
+        French,
+        Italian,
+        German,
+        Russian,
+        Spanish,
+        Portuguese,
+        Malaysian,
+        Indonesian,
+        Vietnamese,
+        Thai,
+        Chinese,
+        Arabic,
+        Czech,
+        Danish,
+        Greek,
+        Finnish,
+        Hungarian,
+        Korean,
+        Dutch,
+        Norwegian,
+        Polish,
+        Romanian,
+        Slovenian,
+        Swedish,
+        Other
+    }
+}

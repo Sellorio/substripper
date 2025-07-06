@@ -1,0 +1,8 @@
+services:
+  substripper:
+    image: ${DOCKER_REGISTRY-}substripper
+    build:
+      context: .
+      dockerfile: Sellorio.Substripper/Dockerfile
+    volumes:
+      - C:\Repos\substripper\TestFiles:/src/TestFiles

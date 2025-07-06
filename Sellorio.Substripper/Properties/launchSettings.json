@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Sellorio.Substripper": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
