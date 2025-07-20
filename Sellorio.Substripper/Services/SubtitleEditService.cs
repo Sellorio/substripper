@@ -107,18 +107,7 @@ namespace Sellorio.Substripper.Services
 
         private static string GetBackupFilename(string mediaFile)
         {
-            const int MaxPathSegmentLength = 255;
-            const string NamePrefix = "old-";
-
-            var mediaFileName = Path.GetFileName(mediaFile);
-
-            return
-                Path.Combine(
-                    Path.GetDirectoryName(mediaFile),
-                    NamePrefix +
-                    (mediaFileName.Length >= MaxPathSegmentLength - NamePrefix.Length
-                        ? mediaFileName.Substring(0, MaxPathSegmentLength - NamePrefix.Length)
-                        : mediaFileName));
+            return Path.GetTempPath() + Guid.NewGuid().ToString() + Path.GetExtension(mediaFile);
         }
     }
 }
