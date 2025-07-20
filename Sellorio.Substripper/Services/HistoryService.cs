@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Sellorio.Substripper.Services
@@ -11,6 +12,11 @@ namespace Sellorio.Substripper.Services
     {
         private readonly JsonSerializerOptions _jsonOptions = new(JsonSerializerDefaults.Web);
         private List<MediaFileHistoryItem> _history;
+
+        public HistoryService()
+        {
+            _jsonOptions.Converters.Add(new JsonStringEnumConverter());
+        }
 
         public async Task<bool> IsMediaFileAlreadyProcessed(string mediaFile)
         {

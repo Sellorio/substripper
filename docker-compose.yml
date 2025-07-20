@@ -1,6 +1,6 @@
 services:
   substripper:
-    image: ${DOCKER_REGISTRY-}substripper
+    image: substripper:latest
     build:
       context: .
       dockerfile: Sellorio.Substripper/Dockerfile

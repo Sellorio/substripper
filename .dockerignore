@@ -1,3 +1,6 @@
+TestFiles/
+Data/
+
 **/.classpath
 **/.dockerignore
 **/.env

@@ -40,7 +40,10 @@ namespace Sellorio.Substripper.Services
                 }
             }
 
-            commandParameters.Append(' ').Append('"').Append(GetTemporaryOutputFilename(mediaFile)).Append('"');
+            var temporaryOutputFilename = GetTemporaryOutputFilename(mediaFile);
+            var backupFilename = GetBackupFilename(mediaFile);
+
+            commandParameters.Append(' ').Append('"').Append(temporaryOutputFilename).Append('"');
 
             var processStartInfo = new ProcessStartInfo("ffmpeg", commandParameters.ToString())
             {
@@ -53,40 +56,69 @@ namespace Sellorio.Substripper.Services
 
             if (process.ExitCode != 0)
             {
-                Console.Error.WriteLine(await process.StandardError.ReadToEndAsync());
+                var errorText = await process.StandardError.ReadToEndAsync();
+
+                Console.Error.WriteLine(errorText);
 
                 try
                 {
-                    File.Delete(GetTemporaryOutputFilename(mediaFile));
+                    File.Delete(temporaryOutputFilename);
                 }
                 catch { }
 
-                throw new InvalidOperationException("Failed to edit subtitles.");
+                throw new InvalidOperationException("Failed to edit subtitles:\r\n" + errorText);
             }
 
-            File.Move(mediaFile, GetBackupFilename(mediaFile));
+            await PublishProcessedFileAsync(mediaFile, temporaryOutputFilename, backupFilename);
+        }
+
+        private static Task PublishProcessedFileAsync(string mediaFile, string temporaryOutputFilename, string backupFilename)
+        {
+            File.Move(mediaFile, backupFilename);
 
             try
             {
-                File.Move(GetTemporaryOutputFilename(mediaFile), mediaFile);
+                File.Move(temporaryOutputFilename, mediaFile);
             }
             catch
             {
-                File.Move(GetBackupFilename(mediaFile), mediaFile);
+                File.Move(backupFilename, mediaFile);
+
+                try
+                {
+                    File.Delete(temporaryOutputFilename);
+                }
+                catch
+                {
+                }
+
                 throw;
             }
 
-            File.Delete(GetBackupFilename(mediaFile));
+            File.Delete(backupFilename);
+
+            return Task.CompletedTask;
         }
 
         private static string GetTemporaryOutputFilename(string mediaFile)
         {
-            return Path.Combine(Path.GetDirectoryName(mediaFile), "edit-" + Path.GetFileName(mediaFile));
+            return Path.GetTempPath() + Guid.NewGuid().ToString() + Path.GetExtension(mediaFile);
         }
 
         private static string GetBackupFilename(string mediaFile)
         {
-            return Path.Combine(Path.GetDirectoryName(mediaFile), "old-" + Path.GetFileName(mediaFile));
+            const int MaxPathSegmentLength = 255;
+            const string NamePrefix = "old-";
+
+            var mediaFileName = Path.GetFileName(mediaFile);
+
+            return
+                Path.Combine(
+                    Path.GetDirectoryName(mediaFile),
+                    NamePrefix +
+                    (mediaFileName.Length >= MaxPathSegmentLength - NamePrefix.Length
+                        ? mediaFileName.Substring(0, MaxPathSegmentLength - NamePrefix.Length)
+                        : mediaFileName));
         }
     }
 }
